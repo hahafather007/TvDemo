@@ -13,8 +13,10 @@
         tools:context=".view.activity.VideoPlayActivity">
 
         <fragment
+            android:id="@+id/fragment"
             android:name="com.hahafather007.tvdemo.view.fragment.VideoPlayFragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_video_play" />
     </android.support.constraint.ConstraintLayout>
 </layout>

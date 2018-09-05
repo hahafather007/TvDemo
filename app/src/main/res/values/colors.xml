@@ -2,4 +2,5 @@
     <color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#1769aa</color>
     <color name="colorAccent">#42a5f5</color>
+    <color name="colorTrans">#00000000</color>
 </resources>
