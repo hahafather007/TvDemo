@@ -5,7 +5,7 @@ import com.chibatching.kotpref.Kotpref
 
 class TVApp : Application() {
     override fun onCreate() {
-        super.onCreate(
+        super.onCreate()
 
         Kotpref.init(this)
     }
