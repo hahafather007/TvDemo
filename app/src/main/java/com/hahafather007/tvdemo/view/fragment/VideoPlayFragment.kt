@@ -13,11 +13,18 @@ import chuangyuan.ycj.videolibrary.video.VideoPlayerManager
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory
 import com.hahafather007.tvdemo.R
+import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.databinding.FragmentVideoPlayBinding
 import com.hahafather007.tvdemo.model.pref.TvPref
+import com.hahafather007.tvdemo.utils.*
+import io.reactivex.Observable
+import io.reactivex.disposables.CompositeDisposable
+import java.util.concurrent.TimeUnit
 
 
-class VideoPlayFragment : Fragment() {
+class VideoPlayFragment : Fragment(), RxController {
+    override val rxComposite = CompositeDisposable()
+
     private lateinit var binding: FragmentVideoPlayBinding
     private lateinit var player: ExoUserPlayer
 
@@ -33,13 +40,34 @@ class VideoPlayFragment : Fragment() {
         initVideo()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        player.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        player.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        player.onStop()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
+        onCleared()
         player.releasePlayers()
     }
 
     private fun initVideo() {
+        var isError = false
+
         player = VideoPlayerManager.Builder(VideoPlayerManager.TYPE_PLAY_USER, binding.videoView)
                 .setPlayUri(getUrl())
                 .setPlayerGestureOnTouch(false)
@@ -51,14 +79,38 @@ class VideoPlayFragment : Fragment() {
             startPlayer<ExoUserPlayer>()
             setShowVideoSwitch(false)
             setSeekBarSeek(false)
+            hideControllerView()
+
             addVideoInfoListener(object : VideoInfoListener {
                 override fun isPlaying(playWhenReady: Boolean) {}
 
-                override fun onPlayerError(e: ExoPlaybackException?) {}
+                override fun onPlayerError(e: ExoPlaybackException?) {
+                    "错误如下：".logError()
+                    e?.printStackTrace()
+                    isError = true
+
+                    Observable.interval(3, TimeUnit.SECONDS)
+                            .map { Runtime.getRuntime().exec("ping -c 1 www.baidu.com") }
+                            .flatMap {
+                                Observable.fromCallable {
+                                    // 0表示可以ping通
+                                    val type = it.waitFor() == 0
+                                    "网络状态：$type".log()
+
+                                    type
+                                }
+                            }
+                            .disposable(this@VideoPlayFragment)
+                            .computeSwitch()
+                            .doOnNext {
+                                startPlayer<ExoUserPlayer>()
+                                onCleared()
+                            }
+                            .subscribe()
+                }
 
                 override fun onPlayStart(currPosition: Long) {
                     hideControllerView()
-
                 }
 
                 override fun onLoadingChanged() {}
