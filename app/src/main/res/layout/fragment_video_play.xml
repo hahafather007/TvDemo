@@ -9,6 +9,7 @@
         <chuangyuan.ycj.videolibrary.widget.VideoPlayerView
             android:id="@+id/videoView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:player_back_image="@drawable/img_trans" />
     </android.support.constraint.ConstraintLayout>
 </layout>

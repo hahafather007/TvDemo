@@ -49,6 +49,9 @@ dependencies {
     implementation 'com.ycjiang:VideoPlayModule:2.2.19'
     implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
 
+    // kotpref
+    implementation 'com.chibatching.kotpref:kotpref:2.3.0'
+    kapt "com.android.databinding:compiler:3.1.4"
 
     // 包含一个焦点放大RecyclerView和滚动TextView
     implementation 'com.yan:tvprojectutils:1.0.2'

@@ -9,5 +9,6 @@ object TestVideos {
         videos["CCTV5高清"] = "http://ivi.bupt.edu.cn/hls/cctv5hd.m3u8"
         videos["CCTV6高清"] = "http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8"
         videos["香港卫视"] = "rtmp://live.hkstv.hk.lxdns.com/live/hks"
+        videos["亚大第一卫视"] = "rtmp://v1.one-tv.com:1935/live/mpegts.stream"
     }
 }
