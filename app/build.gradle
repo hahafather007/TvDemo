@@ -38,15 +38,7 @@ dependencies {
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.6.1'
 
-    // 可以播放视频流的VideoView
-    implementation('com.devbrackets.android:exomedia:4.2.3') {
-        exclude group: 'com.android.support'
-    }
-
-    implementation 'com.github.wseemann:FFmpegMediaPlayer:1.0.4'
-
-    // 完整版
-    implementation 'com.ycjiang:VideoPlayModule:2.2.19'
+    // ExoPlayer的rtmp流插件
     implementation 'com.google.android.exoplayer:extension-rtmp:2.8.2'
 
     // kotpref
@@ -61,4 +53,6 @@ dependencies {
 
     // kotlin所需要的databinding库
     kapt "com.android.databinding:compiler:3.1.4"
+
+    implementation project(':VideoPlayModule')
 }

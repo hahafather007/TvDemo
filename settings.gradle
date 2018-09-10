@@ -1,1 +1,4 @@
 include ':app'
+include ':VideoPlayModule'
+include ':VideoPlayModule-Lite'
+include ':VideoUi'
