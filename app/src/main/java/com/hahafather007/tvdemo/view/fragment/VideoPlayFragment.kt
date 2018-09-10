@@ -66,8 +66,6 @@ class VideoPlayFragment : Fragment(), RxController {
     }
 
     private fun initVideo() {
-        var isError = false
-
         player = VideoPlayerManager.Builder(VideoPlayerManager.TYPE_PLAY_USER, binding.videoView)
                 .setPlayUri(getUrl())
                 .setPlayerGestureOnTouch(false)
@@ -87,9 +85,8 @@ class VideoPlayFragment : Fragment(), RxController {
                 override fun onPlayerError(e: ExoPlaybackException?) {
                     "错误如下：".logError()
                     e?.printStackTrace()
-                    isError = true
 
-                    Observable.interval(3, TimeUnit.SECONDS)
+                    Observable.interval(1, TimeUnit.SECONDS)
                             .map { Runtime.getRuntime().exec("ping -c 1 www.baidu.com") }
                             .flatMap {
                                 Observable.fromCallable {
@@ -100,6 +97,7 @@ class VideoPlayFragment : Fragment(), RxController {
                                     type
                                 }
                             }
+                            .filter { it }
                             .disposable(this@VideoPlayFragment)
                             .computeSwitch()
                             .doOnNext {
