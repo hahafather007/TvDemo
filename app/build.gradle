@@ -12,6 +12,9 @@ android {
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
+        // 开启高斯模糊
+        renderscriptTargetApi 21
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
@@ -50,6 +53,13 @@ dependencies {
 
     // kotpref
     implementation 'com.chibatching.kotpref:kotpref:2.3.0'
+
+    // 高斯模糊
+    implementation 'com.flurgle:blurkit:1.1.1'
+
+    implementation('me.drakeet.multitype:multitype:3.3.0') {
+        exclude group: 'com.android.support'
+    }
 
     // kotlin所需要的databinding库
     kapt "com.android.databinding:compiler:3.1.4"

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.hahafather007.tvdemo.model.data.TvData" />
+
+        <variable
+            name="viewModel"
+            type="com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="180dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ground_rect"
+        android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorTrans}">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{data.title}"
+            android:textColor="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorText}"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="CCTV1高清" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

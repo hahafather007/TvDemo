@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS
 import android.content.IntentFilter
 import android.databinding.DataBindingUtil
+import android.databinding.ViewDataBinding
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
@@ -13,27 +14,41 @@ import android.view.KeyEvent.*
 import android.view.View.*
 import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import com.hahafather007.tvdemo.R
+import com.hahafather007.tvdemo.common.DataBindingItemViewBinder
+import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.databinding.ActivityVideoPlayBinding
+import com.hahafather007.tvdemo.databinding.ItemTvTitleBinding
+import com.hahafather007.tvdemo.model.data.TvData
 import com.hahafather007.tvdemo.utils.log
+import com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel
+import io.reactivex.disposables.CompositeDisposable
 
-class VideoPlayActivity : AppCompatActivity() {
+class VideoPlayActivity : AppCompatActivity(), DataBindingItemViewBinder.OnBindItem<Any, ViewDataBinding>, RxController {
+    override val rxComposite = CompositeDisposable()
+
     private lateinit var binding: ActivityVideoPlayBinding
     private val homeBtnReceiver = HomeBtnReceiver()
+    private val viewModel = VideoPlayViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN);
+        window.setFlags(FLAG_FULLSCREEN, FLAG_FULLSCREEN)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video_play)
+        binding.activity = this
+        binding.viewModel = viewModel
 
         hideBottomBtn()
         initReceiver()
+        addChangeListener()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
         unregisterReceiver(homeBtnReceiver)
+        onCleared()
+        viewModel.onCleared()
     }
 
     /**
@@ -44,18 +59,15 @@ class VideoPlayActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
         // 确定键
-            KEYCODE_ENTER, KEYCODE_DPAD_CENTER -> "ok".log()
+            KEYCODE_ENTER, KEYCODE_DPAD_CENTER -> openDrawer()
         // 返回键
             KEYCODE_BACK -> "back".log()
         // 设置键
             KEYCODE_SETTINGS -> "setting".log()
-        // 下键
-            KEYCODE_DPAD_DOWN -> "↓".log()
-        // 上键
-            KEYCODE_DPAD_UP -> "↑".log()
-        // 左键
+        // 上/下/左/右键
+            KEYCODE_DPAD_DOWN -> viewModel.nextTv()
+            KEYCODE_DPAD_UP -> viewModel.lastTv()
             KEYCODE_DPAD_LEFT -> "←".log()
-        // 右键
             KEYCODE_DPAD_RIGHT -> "→".log()
         // 数字键0~9
             KEYCODE_0 -> "0".log()
@@ -81,6 +93,13 @@ class VideoPlayActivity : AppCompatActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun bind(dataBinding: ViewDataBinding, data: Any, position: Int) {
+        if (dataBinding is ItemTvTitleBinding) {
+            dataBinding.data = data as TvData
+            dataBinding.viewModel = viewModel
+        }
+    }
+
     /**
      * 隐藏底部虚拟按键
      */
@@ -96,6 +115,24 @@ class VideoPlayActivity : AppCompatActivity() {
     private fun initReceiver() {
         val filter = IntentFilter(ACTION_CLOSE_SYSTEM_DIALOGS)
         registerReceiver(homeBtnReceiver, filter)
+    }
+
+    private fun addChangeListener() {
+
+    }
+
+    /**
+     * 打开节目单抽屉
+     */
+    fun openDrawer() {
+        "打开抽屉".log()
+    }
+
+    /**
+     * 打开或者关闭抽屉
+     */
+    fun openOrCloseDrawer() {
+
     }
 
     /**
