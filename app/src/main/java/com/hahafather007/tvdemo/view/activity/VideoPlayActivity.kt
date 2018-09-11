@@ -118,7 +118,7 @@ class VideoPlayActivity : AppCompatActivity(), DataBindingItemViewBinder.OnBindI
     }
 
     private fun addChangeListener() {
-
+        
     }
 
     /**

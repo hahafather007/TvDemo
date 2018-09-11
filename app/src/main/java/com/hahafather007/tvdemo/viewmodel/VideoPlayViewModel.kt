@@ -30,6 +30,7 @@ class VideoPlayViewModel : RxController {
         }
 
         tvList.addAll(list)
+
     }
 
     /**
@@ -48,7 +49,7 @@ class VideoPlayViewModel : RxController {
      */
     fun lastTv() {
         if (tvList.first() == currentTv.get()) {
-            currentTv.set(tvList.first())
+            currentTv.set(tvList.last())
         } else {
             currentTv.set(tvList[tvList.indexOf(currentTv.get()) - 1])
         }
