@@ -8,22 +8,30 @@ import android.content.IntentFilter
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.View.*
 import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
+import com.annimon.stream.function.Supplier
 import com.hahafather007.tvdemo.R
 import com.hahafather007.tvdemo.common.DataBindingItemViewBinder
 import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.databinding.ActivityVideoPlayBinding
 import com.hahafather007.tvdemo.databinding.ItemTvTitleBinding
 import com.hahafather007.tvdemo.model.data.TvData
+import com.hahafather007.tvdemo.utils.RxField
+import com.hahafather007.tvdemo.utils.disposable
 import com.hahafather007.tvdemo.utils.log
+import com.hahafather007.tvdemo.view.fragment.VideoPlayFragment
 import com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 
-class VideoPlayActivity : AppCompatActivity(), DataBindingItemViewBinder.OnBindItem<Any, ViewDataBinding>, RxController {
+class VideoPlayActivity : AppCompatActivity(),
+        DataBindingItemViewBinder.OnBindItem<Any, ViewDataBinding>, RxController {
     override val rxComposite = CompositeDisposable()
 
     private lateinit var binding: ActivityVideoPlayBinding
@@ -65,8 +73,15 @@ class VideoPlayActivity : AppCompatActivity(), DataBindingItemViewBinder.OnBindI
         // 设置键
             KEYCODE_SETTINGS -> "setting".log()
         // 上/下/左/右键
-            KEYCODE_DPAD_DOWN -> viewModel.nextTv()
-            KEYCODE_DPAD_UP -> viewModel.lastTv()
+            KEYCODE_DPAD_DOWN -> {
+                "↓".log()
+
+                viewModel.nextTv()
+            }
+            KEYCODE_DPAD_UP -> {
+                "↑".log()
+                viewModel.lastTv()
+            }
             KEYCODE_DPAD_LEFT -> "←".log()
             KEYCODE_DPAD_RIGHT -> "→".log()
         // 数字键0~9
@@ -118,7 +133,16 @@ class VideoPlayActivity : AppCompatActivity(), DataBindingItemViewBinder.OnBindI
     }
 
     private fun addChangeListener() {
-        
+        RxField.of(viewModel.currentTv)
+                .disposable(this)
+                .doOnNext {
+                    val fm = VideoPlayFragment.getFragmentByUrl(it.url)
+                    val transaction = supportFragmentManager.beginTransaction()
+
+                    transaction.replace(R.id.fragment, fm)
+                            .commit()
+                }
+                .subscribe()
     }
 
     /**

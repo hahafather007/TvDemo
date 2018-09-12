@@ -42,6 +42,8 @@ class VideoPlayViewModel : RxController {
         } else {
             currentTv.set(tvList[tvList.indexOf(currentTv.get()) + 1])
         }
+
+        TvPref.lastTvUrl = currentTv.get()!!.url
     }
 
     /**
@@ -53,5 +55,7 @@ class VideoPlayViewModel : RxController {
         } else {
             currentTv.set(tvList[tvList.indexOf(currentTv.get()) - 1])
         }
+
+        TvPref.lastTvUrl = currentTv.get()!!.url
     }
 }
