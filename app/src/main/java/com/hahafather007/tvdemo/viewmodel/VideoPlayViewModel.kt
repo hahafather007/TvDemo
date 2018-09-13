@@ -18,9 +18,13 @@ class VideoPlayViewModel : RxController {
     val currentTv = ObservableField<TvData>()
 
     init {
-        TestVideos.videos
-                .find { it.url == TvPref.lastTvUrl }
-                .apply { currentTv.set(this) }
+        val tv = TestVideos.videos.find { it.url == TvPref.lastTvUrl }
+
+        if (tv != null) {
+            currentTv.set(tv)
+        } else {
+            currentTv.set(TestVideos.videos.first())
+        }
 
         tvList.addAll(TestVideos.videos)
 
@@ -28,9 +32,16 @@ class VideoPlayViewModel : RxController {
         (0..10).map {
             list.add(TvData("$it", ""))
         }
+        list.add(TvData("撒大声地所撒大所多撒大所", "撒大声地所撒大所多撒大所"))
 
         tvList.addAll(list)
 
+    }
+
+    fun setCurrentTv(data: TvData) {
+        currentTv.set(data)
+
+        TvPref.lastTvUrl = currentTv.get()!!.url
     }
 
     /**

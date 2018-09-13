@@ -96,6 +96,7 @@ class VideoPlayActivity : AppCompatActivity(),
             }
             KEYCODE_DPAD_UP -> {
                 "↑".log()
+
                 viewModel.lastTv()
             }
             KEYCODE_DPAD_LEFT -> "←".log()
@@ -126,6 +127,7 @@ class VideoPlayActivity : AppCompatActivity(),
 
     override fun bind(dataBinding: ViewDataBinding, data: Any, position: Int) {
         if (dataBinding is ItemTvTitleBinding) {
+            dataBinding.index = viewModel.tvList.indexOf(data)
             dataBinding.data = data as TvData
             dataBinding.viewModel = viewModel
         }
@@ -141,12 +143,17 @@ class VideoPlayActivity : AppCompatActivity(),
         realWidth.log()
     }
 
+    private fun recyclerViewScroll() {
+        binding.recyclerView.scrollToPosition(viewModel.tvList.indexOf(viewModel.currentTv.get()))
+    }
+
     /**
      * 隐藏底部虚拟按键
      */
     private fun hideBottomBtn() {
         val decorView = window.decorView
-        val uiOptions = SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_IMMERSIVE_STICKY or SYSTEM_UI_FLAG_FULLSCREEN
+        val uiOptions = SYSTEM_UI_FLAG_HIDE_NAVIGATION or SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
+                SYSTEM_UI_FLAG_FULLSCREEN
         decorView.systemUiVisibility = uiOptions
     }
 
@@ -168,6 +175,8 @@ class VideoPlayActivity : AppCompatActivity(),
                     videoFragment = fm
                     transaction.replace(R.id.fragment, fm)
                             .commit()
+
+                    recyclerViewScroll()
                 }
                 .subscribe()
 

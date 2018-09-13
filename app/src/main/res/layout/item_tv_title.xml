@@ -6,6 +6,10 @@
     <data>
 
         <variable
+            name="index"
+            type="Integer" />
+
+        <variable
             name="data"
             type="com.hahafather007.tvdemo.model.data.TvData" />
 
@@ -17,20 +21,53 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginEnd="1dp"
-        android:background="@drawable/ground_rect"
-        android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorTrans}">
+        android:onClick="@{() -> viewModel.setCurrentTv(data)}"
+        android:layout_marginEnd="1dp">
+        <!--android:background="@drawable/ground_rect"-->
+        <!--android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorTrans}"-->
+        <FrameLayout
+            android:id="@+id/icon"
+            android:layout_width="30dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/tv_items_icon"
+            android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorText}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/img_play"
+                android:tint="#aaaaaa"
+                app:visible="@{data == viewModel.currentTv}" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@{index.toString}"
+                android:textColor="#aaaaaa"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:visible="@{data != viewModel.currentTv}" />
+        </FrameLayout>
+
+        <com.yan.tvprojectutils.MarqueeText
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="@{data.title}"
             android:textColor="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorText}"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/icon"
             app:layout_constraintTop_toTopOf="parent"
+            app:textScroll="@{data == viewModel.currentTv}"
             tools:text="CCTV1高清" />
     </android.support.constraint.ConstraintLayout>
 </layout>

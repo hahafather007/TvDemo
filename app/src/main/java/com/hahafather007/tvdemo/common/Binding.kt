@@ -6,13 +6,33 @@ import android.databinding.ViewDataBinding
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import com.hahafather007.tvdemo.common.DataBindingItemViewBinder.OnBindItem
+import com.yan.tvprojectutils.MarqueeText
 import io.reactivex.functions.BiFunction
 import me.drakeet.multitype.ItemViewBinder
 import me.drakeet.multitype.MultiTypeAdapter
 
 object Binding {
+    @JvmStatic
+    @BindingAdapter("visible")
+    fun setVisible(view: View, visible: Boolean) {
+        view.visibility = if (visible) VISIBLE else GONE
+    }
+
+    @JvmStatic
+    @BindingAdapter("textScroll")
+    fun setTextScroll(view: MarqueeText, scroll: Boolean) {
+        if (scroll) {
+            view.startScroll()
+        } else {
+            view.stopScroll()
+        }
+    }
+
     @JvmStatic
     @BindingAdapter("itemLayout", "onBindItem")
     fun setAdapter(view: RecyclerView, resId: Int, onBindItem: OnBindItem<Any, ViewDataBinding>) {
