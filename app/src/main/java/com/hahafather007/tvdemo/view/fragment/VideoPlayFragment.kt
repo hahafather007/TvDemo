@@ -2,9 +2,11 @@ package com.hahafather007.tvdemo.view.fragment
 
 import android.content.Intent.EXTRA_KEY_EVENT
 import android.databinding.DataBindingUtil
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import chuangyuan.ycj.videolibrary.listener.VideoInfoListener
@@ -128,12 +130,23 @@ class VideoPlayFragment : Fragment(), RxController {
         }
     }
 
+    fun isPlayerValid(): Boolean {
+        return ::player.isInitialized
+    }
+
+    fun getSnapshot(): Bitmap {
+        val videoView = binding.videoView.playerView.videoSurfaceView as TextureView
+
+        return videoView.getBitmap(Bitmap.createBitmap(resources.displayMetrics,
+                192, 108, Bitmap.Config.ARGB_4444))
+    }
+
     companion object {
         /**
          * 根据传入的url返回fragment
          * @param url 视频流的地址
          */
-        fun getFragmentByUrl(url: String): Fragment {
+        fun getFragmentByUrl(url: String): VideoPlayFragment {
             val bundle = Bundle()
             bundle.putString(EXTRA_KEY_EVENT, url)
 

@@ -34,11 +34,19 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/drawer"
             android:layout_width="180dp"
-            android:background="#66aaaaaa"
             android:layout_height="match_parent"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
+            android:background="@drawable/tv_items_ground"
             app:layout_constraintEnd_toStartOf="parent">
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/drawerGround"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitXY"
+                app:riv_corner_radius_bottom_right="14dp"
+                app:riv_corner_radius_top_right="14dp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"

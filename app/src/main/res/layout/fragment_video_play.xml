@@ -10,6 +10,7 @@
             android:id="@+id/videoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:player_back_image="@drawable/img_trans" />
+            app:player_back_image="@drawable/img_trans"
+            app:surface_type="texture_view" />
     </android.support.constraint.ConstraintLayout>
 </layout>

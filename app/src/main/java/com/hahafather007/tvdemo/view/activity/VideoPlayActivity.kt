@@ -7,28 +7,28 @@ import android.content.Intent.ACTION_CLOSE_SYSTEM_DIALOGS
 import android.content.IntentFilter
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.View.*
 import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
-import com.annimon.stream.function.Supplier
 import com.hahafather007.tvdemo.R
 import com.hahafather007.tvdemo.common.DataBindingItemViewBinder
 import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.databinding.ActivityVideoPlayBinding
 import com.hahafather007.tvdemo.databinding.ItemTvTitleBinding
 import com.hahafather007.tvdemo.model.data.TvData
-import com.hahafather007.tvdemo.utils.RxField
-import com.hahafather007.tvdemo.utils.disposable
-import com.hahafather007.tvdemo.utils.log
+import com.hahafather007.tvdemo.utils.*
 import com.hahafather007.tvdemo.view.fragment.VideoPlayFragment
 import com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import jp.wasabeef.blurry.internal.Blur
+import jp.wasabeef.blurry.internal.BlurFactor
+import java.util.concurrent.TimeUnit
 
 class VideoPlayActivity : AppCompatActivity(),
         DataBindingItemViewBinder.OnBindItem<Any, ViewDataBinding>, RxController {
@@ -37,6 +37,15 @@ class VideoPlayActivity : AppCompatActivity(),
     private lateinit var binding: ActivityVideoPlayBinding
     private val homeBtnReceiver = HomeBtnReceiver()
     private val viewModel = VideoPlayViewModel()
+    private var videoFragment: VideoPlayFragment? = null
+    private var isUiFinished = false
+    private var isDrawerOpen = false
+    /**
+     * 截图剪切的属性
+     */
+    private var realY = 0
+    private var realHeight = 0
+    private var realWidth = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +58,13 @@ class VideoPlayActivity : AppCompatActivity(),
         hideBottomBtn()
         initReceiver()
         addChangeListener()
+        initReals()
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+
+        isUiFinished = hasFocus
     }
 
     override fun onDestroy() {
@@ -115,6 +131,16 @@ class VideoPlayActivity : AppCompatActivity(),
         }
     }
 
+    private fun initReals() {
+        val screenInfo = getScreenInfo()
+
+        realY = (108 * 24 * screenInfo.density / screenInfo.height).toInt()
+        realWidth = (192 * 180 * screenInfo.density / screenInfo.width).toInt()
+        realHeight = 108 - realY
+
+        realWidth.log()
+    }
+
     /**
      * 隐藏底部虚拟按键
      */
@@ -139,8 +165,35 @@ class VideoPlayActivity : AppCompatActivity(),
                     val fm = VideoPlayFragment.getFragmentByUrl(it.url)
                     val transaction = supportFragmentManager.beginTransaction()
 
+                    videoFragment = fm
                     transaction.replace(R.id.fragment, fm)
                             .commit()
+                }
+                .subscribe()
+
+        // 计算高斯模糊的drawer背景
+        Observable.interval(40, TimeUnit.MILLISECONDS)
+                .filter {
+                    isUiFinished && videoFragment != null && videoFragment!!.isPlayerValid()
+                            && realHeight != 0 && realWidth != 0 && realY != 0 && isDrawerOpen
+                }
+                .flatMap {
+                    Observable.just(videoFragment!!.getSnapshot())
+                            .map { Bitmap.createBitmap(it, 0, realY, realWidth, realHeight) }
+                }
+                .flatMap {
+                    val factor = BlurFactor()
+                    factor.radius = 8
+                    factor.width = it.width
+                    factor.height = it.height
+                    factor.color = Color.argb(0x66, 0x66, 0x66, 0x66)
+
+                    Observable.just(Blur.of(this, it, factor))
+                }
+                .disposable(this)
+                .asyncSwitch()
+                .doOnNext {
+                    binding.drawerGround.setImageBitmap(it)
                 }
                 .subscribe()
     }
@@ -149,13 +202,13 @@ class VideoPlayActivity : AppCompatActivity(),
      * 打开或者关闭抽屉
      */
     fun openOrCloseDrawer() {
-        val moveValue = if (binding.drawer.x < 0) binding.drawer.width else 0
+        val moveValue = if (binding.drawer.x < -1) binding.drawer.width - 1 else 0
 
-        moveValue.log()
+        isDrawerOpen = moveValue != 0
 
         binding.drawer.animate()
                 .translationX(moveValue.toFloat())
-                .setDuration(500)
+                .setDuration(200)
                 .start()
     }
 

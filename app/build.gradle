@@ -55,7 +55,10 @@ dependencies {
     implementation 'com.chibatching.kotpref:kotpref:2.3.0'
 
     // 高斯模糊
-    implementation 'com.flurgle:blurkit:1.1.1'
+    implementation 'jp.wasabeef:blurry:2.1.1'
+
+    // 圆形图片
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
     implementation('me.drakeet.multitype:multitype:3.3.0') {
         exclude group: 'com.android.support'
