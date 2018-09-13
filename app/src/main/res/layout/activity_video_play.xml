@@ -17,6 +17,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         tools:background="#000000"
         tools:context=".view.activity.VideoPlayActivity">
 
@@ -58,5 +59,57 @@
                 app:onBindItem="@{activity::bind}"
                 tools:listitem="@layout/item_tv_title" />
         </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/volumeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginBottom="60dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 0}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 1}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 2}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 3}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 4}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 5}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 6}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 7}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 8}" />
+
+            <include
+                layout="@layout/item_tv_volume"
+                app:valid="@{viewModel.volume > 9}" />
+        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </layout>

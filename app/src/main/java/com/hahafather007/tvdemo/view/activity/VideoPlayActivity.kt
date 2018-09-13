@@ -26,6 +26,7 @@ import com.hahafather007.tvdemo.view.fragment.VideoPlayFragment
 import com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import jp.wasabeef.blurry.internal.Blur
 import jp.wasabeef.blurry.internal.BlurFactor
 import java.util.concurrent.TimeUnit
@@ -37,8 +38,15 @@ class VideoPlayActivity : AppCompatActivity(),
     private lateinit var binding: ActivityVideoPlayBinding
     private val homeBtnReceiver = HomeBtnReceiver()
     private val viewModel = VideoPlayViewModel()
+    private var volumeTimer: Disposable? = null
     private var videoFragment: VideoPlayFragment? = null
+    /**
+     * UI是否绘制完毕
+     */
     private var isUiFinished = false
+    /**
+     * 抽屉是否打开
+     */
     private var isDrawerOpen = false
     /**
      * 截图剪切的属性
@@ -85,7 +93,18 @@ class VideoPlayActivity : AppCompatActivity(),
         // 确定键
             KEYCODE_ENTER, KEYCODE_DPAD_CENTER -> openOrCloseDrawer()
         // 返回键
-            KEYCODE_BACK -> "back".log()
+            KEYCODE_BACK -> {
+                "back".log()
+
+                if (isDrawerOpen) {
+                    isDrawerOpen = false
+
+                    binding.drawer.animate()
+                            .translationX(0f)
+                            .setDuration(200)
+                            .start()
+                }
+            }
         // 设置键
             KEYCODE_SETTINGS -> "setting".log()
         // 上/下/左/右键
@@ -99,8 +118,16 @@ class VideoPlayActivity : AppCompatActivity(),
 
                 viewModel.lastTv()
             }
-            KEYCODE_DPAD_LEFT -> "←".log()
-            KEYCODE_DPAD_RIGHT -> "→".log()
+            KEYCODE_DPAD_LEFT -> {
+                "←".log()
+
+                controlVolume(false)
+            }
+            KEYCODE_DPAD_RIGHT -> {
+                "→".log()
+
+                controlVolume(true)
+            }
         // 数字键0~9
             KEYCODE_0 -> "0".log()
             KEYCODE_1 -> "1".log()
@@ -113,13 +140,29 @@ class VideoPlayActivity : AppCompatActivity(),
             KEYCODE_8 -> "8".log()
             KEYCODE_9 -> "9".log()
         // 后一个视频
-            KEYCODE_PAGE_DOWN, KEYCODE_MEDIA_NEXT -> "下一曲".log()
+            KEYCODE_PAGE_DOWN, KEYCODE_MEDIA_NEXT -> {
+                "下一曲".log()
+
+                viewModel.nextTv()
+            }
         // 前一个视频
-            KEYCODE_PAGE_UP, KEYCODE_MEDIA_PREVIOUS -> "上一曲".log()
+            KEYCODE_PAGE_UP, KEYCODE_MEDIA_PREVIOUS -> {
+                "上一曲".log()
+
+                viewModel.lastTv()
+            }
         // 音量+
-            KEYCODE_VOLUME_UP -> "音量+".log()
+            KEYCODE_VOLUME_UP -> {
+                "音量+".log()
+
+                controlVolume(true)
+            }
         // 音量-
-            KEYCODE_VOLUME_DOWN -> "音量-".log()
+            KEYCODE_VOLUME_DOWN -> {
+                "音量-".log()
+
+                controlVolume(false)
+            }
         }
 
         return super.onKeyDown(keyCode, event)
@@ -130,6 +173,33 @@ class VideoPlayActivity : AppCompatActivity(),
             dataBinding.index = viewModel.tvList.indexOf(data)
             dataBinding.data = data as TvData
             dataBinding.viewModel = viewModel
+        }
+    }
+
+    /**
+     * 控制音量
+     * @param isAdd 是否为加音量
+     */
+    private fun controlVolume(isAdd: Boolean) {
+        val fm = videoFragment
+
+        if (fm != null) {
+            volumeTimer = Observable.timer(2, TimeUnit.SECONDS)
+                    .computeSwitch()
+                    .doOnSubscribe {
+                        volumeTimer?.dispose()
+
+                        binding.volumeLayout.visibility = VISIBLE
+                    }
+                    .doOnNext { binding.volumeLayout.visibility = GONE }
+                    .subscribe()
+
+            if (isAdd) {
+                viewModel.volume.set(fm.addVolume())
+            } else {
+                viewModel.volume.set(fm.subVolume())
+
+            }
         }
     }
 
@@ -211,9 +281,9 @@ class VideoPlayActivity : AppCompatActivity(),
      * 打开或者关闭抽屉
      */
     fun openOrCloseDrawer() {
-        val moveValue = if (binding.drawer.x < -1) binding.drawer.width - 1 else 0
+        val moveValue = if (isDrawerOpen) binding.drawer.width - 1 else 0
 
-        isDrawerOpen = moveValue != 0
+        isDrawerOpen = !isDrawerOpen
 
         binding.drawer.animate()
                 .translationX(moveValue.toFloat())

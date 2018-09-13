@@ -2,6 +2,8 @@ package com.hahafather007.tvdemo.viewmodel
 
 import android.databinding.ObservableArrayList
 import android.databinding.ObservableField
+import android.databinding.ObservableFloat
+import android.databinding.ObservableInt
 import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.common.TestVideos
 import com.hahafather007.tvdemo.model.data.TvData
@@ -15,7 +17,14 @@ class VideoPlayViewModel : RxController {
      * 电视节目列表
      */
     val tvList = ObservableArrayList<TvData>()
+    /**
+     * 当前的节目
+     */
     val currentTv = ObservableField<TvData>()
+    /**
+     * 播放音量
+     */
+    val volume = ObservableInt()
 
     init {
         val tv = TestVideos.videos.find { it.url == TvPref.lastTvUrl }
@@ -36,6 +45,7 @@ class VideoPlayViewModel : RxController {
 
         tvList.addAll(list)
 
+        volume.set((TvPref.videoVolume * 10).toInt())
     }
 
     fun setCurrentTv(data: TvData) {

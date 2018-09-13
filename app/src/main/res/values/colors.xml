@@ -4,4 +4,6 @@
     <color name="colorAccent">#42a5f5</color>
     <color name="colorTrans">#00000000</color>
     <color name="colorText">#ffffff</color>
+    <color name="colorVolumeValid">#cc2196f3</color>
+    <color name="colorVolumeInvalid">#88ffffff</color>
 </resources>

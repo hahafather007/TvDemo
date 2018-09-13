@@ -80,6 +80,7 @@ class VideoPlayFragment : Fragment(), RxController {
             setShowVideoSwitch(false)
             setSeekBarSeek(false)
             hideControllerView()
+            player.volume = TvPref.videoVolume
 
             addVideoInfoListener(object : VideoInfoListener {
                 override fun isPlaying(playWhenReady: Boolean) {}
@@ -139,6 +140,32 @@ class VideoPlayFragment : Fragment(), RxController {
 
         return videoView.getBitmap(Bitmap.createBitmap(resources.displayMetrics,
                 192, 108, Bitmap.Config.ARGB_4444))
+    }
+
+    fun addVolume(): Int {
+        if ((player.player.volume * 10).toInt() < 10) {
+            player.player.volume += 0.1f
+        }
+
+        val volume = player.player.volume
+        TvPref.videoVolume = volume
+
+        (volume * 10).toInt().log()
+
+        return (volume * 10).toInt()
+    }
+
+    fun subVolume(): Int {
+        if ((player.player.volume * 10).toInt() > 0) {
+            player.player.volume -= 0.1f
+        }
+
+        val volume = player.player.volume
+        TvPref.videoVolume = volume
+
+        (volume * 10).toInt().log()
+
+        return (volume * 10).toInt()
     }
 
     companion object {
