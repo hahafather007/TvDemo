@@ -281,9 +281,9 @@ class VideoPlayActivity : AppCompatActivity(),
      * 打开或者关闭抽屉
      */
     fun openOrCloseDrawer() {
-        val moveValue = if (isDrawerOpen) binding.drawer.width - 1 else 0
+        val moveValue = if (binding.drawer.x < -1) binding.drawer.width - 1 else 0
 
-        isDrawerOpen = !isDrawerOpen
+        isDrawerOpen = moveValue != 0
 
         binding.drawer.animate()
                 .translationX(moveValue.toFloat())

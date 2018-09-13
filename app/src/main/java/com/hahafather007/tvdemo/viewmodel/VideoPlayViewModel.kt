@@ -37,14 +37,6 @@ class VideoPlayViewModel : RxController {
 
         tvList.addAll(TestVideos.videos)
 
-        val list = mutableListOf<TvData>()
-        (0..10).map {
-            list.add(TvData("$it", ""))
-        }
-        list.add(TvData("撒大声地所撒大所多撒大所", "撒大声地所撒大所多撒大所"))
-
-        tvList.addAll(list)
-
         volume.set((TvPref.videoVolume * 10).toInt())
     }
 
