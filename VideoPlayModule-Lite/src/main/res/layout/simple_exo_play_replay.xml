@@ -5,7 +5,8 @@
     android:background="#80000000"
     android:clickable="true"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="gone">
 
 
     <TextView

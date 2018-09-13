@@ -113,7 +113,9 @@ class VideoPlayFragment : Fragment(), RxController {
 
                 override fun onLoadingChanged() {}
 
-                override fun onPlayEnd() {}
+                override fun onPlayEnd() {
+                    startPlayer<ExoUserPlayer>()
+                }
             })
         }
     }

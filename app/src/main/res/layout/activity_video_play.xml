@@ -34,9 +34,11 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/drawer"
             android:layout_width="180dp"
+            android:background="#66aaaaaa"
             android:layout_height="match_parent"
             android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toStartOf="parent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"

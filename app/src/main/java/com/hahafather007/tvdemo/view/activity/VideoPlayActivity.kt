@@ -67,7 +67,7 @@ class VideoPlayActivity : AppCompatActivity(),
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
         // 确定键
-            KEYCODE_ENTER, KEYCODE_DPAD_CENTER -> openDrawer()
+            KEYCODE_ENTER, KEYCODE_DPAD_CENTER -> openOrCloseDrawer()
         // 返回键
             KEYCODE_BACK -> "back".log()
         // 设置键
@@ -146,17 +146,17 @@ class VideoPlayActivity : AppCompatActivity(),
     }
 
     /**
-     * 打开节目单抽屉
-     */
-    fun openDrawer() {
-        "打开抽屉".log()
-    }
-
-    /**
      * 打开或者关闭抽屉
      */
     fun openOrCloseDrawer() {
+        val moveValue = if (binding.drawer.x < 0) binding.drawer.width else 0
 
+        moveValue.log()
+
+        binding.drawer.animate()
+                .translationX(moveValue.toFloat())
+                .setDuration(500)
+                .start()
     }
 
     /**
