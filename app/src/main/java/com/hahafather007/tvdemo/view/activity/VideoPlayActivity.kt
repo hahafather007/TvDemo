@@ -26,7 +26,6 @@ import com.hahafather007.tvdemo.view.fragment.VideoPlayFragment
 import com.hahafather007.tvdemo.viewmodel.VideoPlayViewModel
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import jp.wasabeef.blurry.internal.Blur
 import jp.wasabeef.blurry.internal.BlurFactor
 import java.util.concurrent.TimeUnit
@@ -38,7 +37,6 @@ class VideoPlayActivity : AppCompatActivity(),
     private lateinit var binding: ActivityVideoPlayBinding
     private val homeBtnReceiver = HomeBtnReceiver()
     private val viewModel = VideoPlayViewModel()
-    private var volumeTimer: Disposable? = null
     private var videoFragment: VideoPlayFragment? = null
     /**
      * UI是否绘制完毕
@@ -129,16 +127,56 @@ class VideoPlayActivity : AppCompatActivity(),
                 controlVolume(true)
             }
         // 数字键0~9
-            KEYCODE_0 -> "0".log()
-            KEYCODE_1 -> "1".log()
-            KEYCODE_2 -> "2".log()
-            KEYCODE_3 -> "3".log()
-            KEYCODE_4 -> "4".log()
-            KEYCODE_5 -> "5".log()
-            KEYCODE_6 -> "6".log()
-            KEYCODE_7 -> "7".log()
-            KEYCODE_8 -> "8".log()
-            KEYCODE_9 -> "9".log()
+            KEYCODE_0 -> {
+                "0".log()
+
+                viewModel.setTvIndex(0)
+            }
+            KEYCODE_1 -> {
+                "1".log()
+
+                viewModel.setTvIndex(1)
+            }
+            KEYCODE_2 -> {
+                "2".log()
+
+                viewModel.setTvIndex(2)
+            }
+            KEYCODE_3 -> {
+                "3".log()
+
+                viewModel.setTvIndex(3)
+            }
+            KEYCODE_4 -> {
+                "4".log()
+
+                viewModel.setTvIndex(4)
+            }
+            KEYCODE_5 -> {
+                "5".log()
+
+                viewModel.setTvIndex(5)
+            }
+            KEYCODE_6 -> {
+                "6".log()
+
+                viewModel.setTvIndex(6)
+            }
+            KEYCODE_7 -> {
+                "7".log()
+
+                viewModel.setTvIndex(7)
+            }
+            KEYCODE_8 -> {
+                "8".log()
+
+                viewModel.setTvIndex(8)
+            }
+            KEYCODE_9 -> {
+                "9".log()
+
+                viewModel.setTvIndex(9)
+            }
         // 后一个视频
             KEYCODE_PAGE_DOWN, KEYCODE_MEDIA_NEXT -> {
                 "下一曲".log()
@@ -184,21 +222,10 @@ class VideoPlayActivity : AppCompatActivity(),
         val fm = videoFragment
 
         if (fm != null) {
-            volumeTimer = Observable.timer(2, TimeUnit.SECONDS)
-                    .computeSwitch()
-                    .doOnSubscribe {
-                        volumeTimer?.dispose()
-
-                        binding.volumeLayout.visibility = VISIBLE
-                    }
-                    .doOnNext { binding.volumeLayout.visibility = GONE }
-                    .subscribe()
-
             if (isAdd) {
-                viewModel.volume.set(fm.addVolume())
+                viewModel.setVolume(fm.addVolume())
             } else {
-                viewModel.volume.set(fm.subVolume())
-
+                viewModel.setVolume(fm.subVolume())
             }
         }
     }

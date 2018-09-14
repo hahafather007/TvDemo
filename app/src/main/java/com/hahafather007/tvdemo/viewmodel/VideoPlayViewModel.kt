@@ -1,14 +1,18 @@
 package com.hahafather007.tvdemo.viewmodel
 
 import android.databinding.ObservableArrayList
+import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
-import android.databinding.ObservableFloat
 import android.databinding.ObservableInt
 import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.common.TestVideos
 import com.hahafather007.tvdemo.model.data.TvData
 import com.hahafather007.tvdemo.model.pref.TvPref
+import com.hahafather007.tvdemo.utils.computeSwitch
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import java.util.concurrent.TimeUnit
 
 class VideoPlayViewModel : RxController {
     override val rxComposite = CompositeDisposable()
@@ -25,6 +29,20 @@ class VideoPlayViewModel : RxController {
      * 播放音量
      */
     val volume = ObservableInt()
+    /**
+     * 音量是否显示
+     */
+    val isVolumeShow = ObservableBoolean()
+    /**
+     * 节目数字是否显示
+     */
+    val isTvIndexShow = ObservableBoolean()
+    /**
+     * 节目数字
+     */
+    val tvIndex = ObservableField<String>()
+
+    private var volumeTimer: Disposable? = null
 
     init {
         val tv = TestVideos.videos.find { it.url == TvPref.lastTvUrl }
@@ -37,13 +55,30 @@ class VideoPlayViewModel : RxController {
 
         tvList.addAll(TestVideos.videos)
 
-        volume.set((TvPref.videoVolume * 10).toInt())
+        volume.set((TvPref.videoVolume * 20).toInt())
     }
 
     fun setCurrentTv(data: TvData) {
         currentTv.set(data)
 
         TvPref.lastTvUrl = currentTv.get()!!.url
+    }
+
+    fun setVolume(vol: Int) {
+        volumeTimer = Observable.timer(2, TimeUnit.SECONDS)
+                .computeSwitch()
+                .doOnSubscribe {
+                    volumeTimer?.dispose()
+
+                    volume.set(vol)
+                    isVolumeShow.set(true)
+                }
+                .doOnNext { isVolumeShow.set(false) }
+                .subscribe()
+    }
+
+    fun setTvIndex(index:Int){
+
     }
 
     /**

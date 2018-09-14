@@ -143,29 +143,29 @@ class VideoPlayFragment : Fragment(), RxController {
     }
 
     fun addVolume(): Int {
-        if ((player.player.volume * 10).toInt() < 10) {
-            player.player.volume += 0.1f
+        if ((player.player.volume * 20).toInt() < 20) {
+            player.player.volume += 0.05f
         }
 
         val volume = player.player.volume
         TvPref.videoVolume = volume
 
-        (volume * 10).toInt().log()
+        (volume * 20).toInt().log()
 
-        return (volume * 10).toInt()
+        return (volume * 20).toInt()
     }
 
     fun subVolume(): Int {
-        if ((player.player.volume * 10).toInt() > 0) {
-            player.player.volume -= 0.1f
+        if ((player.player.volume * 20).toInt() > 0) {
+            player.player.volume -= 0.05f
         }
 
         val volume = player.player.volume
         TvPref.videoVolume = volume
 
-        (volume * 10).toInt().log()
+        (volume * 20).toInt().log()
 
-        return (volume * 10).toInt()
+        return (volume * 20).toInt()
     }
 
     companion object {
