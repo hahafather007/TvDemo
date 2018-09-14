@@ -20,17 +20,16 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:onClick="@{() -> viewModel.setCurrentTv(data)}"
-        android:layout_marginEnd="1dp">
-        <!--android:background="@drawable/ground_rect"-->
-        <!--android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorTrans}"-->
+        android:layout_height="35dp"
+        android:layout_marginEnd="1dp"
+        android:onClick="@{() -> viewModel.setCurrentTv(data)}">
+
         <FrameLayout
             android:id="@+id/icon"
+            drawable_radius="@{4}"
             android:layout_width="30dp"
             android:layout_height="20dp"
             android:layout_marginStart="6dp"
-            android:background="@drawable/tv_items_icon"
             android:backgroundTint="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorText}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -62,7 +61,7 @@
             android:layout_marginStart="8dp"
             android:text="@{data.title}"
             android:textColor="@{data == viewModel.currentTv ? @color/colorPrimary : @color/colorText}"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/icon"

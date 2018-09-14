@@ -57,6 +57,9 @@ dependencies {
     // 高斯模糊
     implementation 'jp.wasabeef:blurry:2.1.1'
 
+    // 代替drawable中xml的库
+    implementation 'com.github.whataa:noDrawable:1.0.0'
+
     // 圆形图片
     implementation 'com.makeramen:roundedimageview:2.3.0'
 

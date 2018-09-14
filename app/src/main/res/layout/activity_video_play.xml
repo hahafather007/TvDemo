@@ -34,11 +34,13 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/drawer"
-            android:layout_width="180dp"
+            drawable_radiusRB="@{14}"
+            drawable_radiusRT="@{14}"
+            drawable_solidColor="@{0x66666666}"
+            android:layout_width="160dp"
             android:layout_height="match_parent"
             android:layout_marginBottom="24dp"
             android:layout_marginTop="24dp"
-            android:background="@drawable/tv_items_ground"
             app:layout_constraintEnd_toStartOf="parent">
 
             <com.makeramen.roundedimageview.RoundedImageView
