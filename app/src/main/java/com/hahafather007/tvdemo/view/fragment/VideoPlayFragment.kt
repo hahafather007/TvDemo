@@ -130,10 +130,16 @@ class VideoPlayFragment : Fragment(), RxController {
         }
     }
 
+    /**
+     * @return 返回播放器是否准备完毕
+     */
     fun isPlayerValid(): Boolean {
         return ::player.isInitialized
     }
 
+    /**
+     * @return 获取当前帧的视频截图
+     */
     fun getSnapshot(): Bitmap {
         val videoView = binding.videoView.playerView.videoSurfaceView as TextureView
 
@@ -141,6 +147,9 @@ class VideoPlayFragment : Fragment(), RxController {
                 192, 108, Bitmap.Config.ARGB_4444))
     }
 
+    /**
+     * 音量+
+     */
     fun addVolume(): Int {
         if ((player.player.volume * 20).toInt() < 20) {
             player.player.volume += 0.05f
@@ -154,6 +163,9 @@ class VideoPlayFragment : Fragment(), RxController {
         return (volume * 20).toInt()
     }
 
+    /**
+     * 音量-
+     */
     fun subVolume(): Int {
         if ((player.player.volume * 20).toInt() > 0) {
             player.player.volume -= 0.05f
