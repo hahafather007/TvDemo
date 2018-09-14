@@ -39,6 +39,10 @@ class VideoPlayActivity : AppCompatActivity(),
     private val viewModel = VideoPlayViewModel()
     private var videoFragment: VideoPlayFragment? = null
     /**
+     * 抽屉的背景
+     */
+    private var drawerBitmap: Bitmap? = null
+    /**
      * UI是否绘制完毕
      */
     private var isUiFinished = false
@@ -277,7 +281,7 @@ class VideoPlayActivity : AppCompatActivity(),
                 }
                 .subscribe()
 
-        // 计算高斯模糊的drawer背景
+        // 获取视频截图并裁剪
         Observable.interval(40, TimeUnit.MILLISECONDS)
                 .filter {
                     isUiFinished && videoFragment != null && videoFragment!!.isPlayerValid()
@@ -287,6 +291,17 @@ class VideoPlayActivity : AppCompatActivity(),
                     Observable.just(videoFragment!!.getSnapshot())
                             .map { Bitmap.createBitmap(it, 0, realY, realWidth, realHeight) }
                 }
+                .disposable(this)
+                .asyncSwitch()
+                .doOnNext {
+                    drawerBitmap = it
+                }
+                .subscribe()
+
+        // 计算高斯模糊
+        Observable.interval(40, TimeUnit.MILLISECONDS)
+                .filter { isDrawerOpen && drawerBitmap != null }
+                .map { drawerBitmap }
                 .flatMap {
                     val factor = BlurFactor()
                     factor.radius = 8
