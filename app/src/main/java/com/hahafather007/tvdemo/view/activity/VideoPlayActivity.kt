@@ -102,7 +102,7 @@ class VideoPlayActivity : AppCompatActivity(),
                     isDrawerOpen = false
 
                     binding.drawer.animate()
-                            .translationX(0f)
+                            .translationX(-getScreenInfo().density)
                             .setDuration(200)
                             .start()
                 }
@@ -323,12 +323,13 @@ class VideoPlayActivity : AppCompatActivity(),
      * 打开或者关闭抽屉
      */
     fun openOrCloseDrawer() {
-        val moveValue = if (binding.drawer.x < -1) binding.drawer.width - 1 else 0
+        val moveValue = if (!isDrawerOpen)
+            binding.drawer.width - getScreenInfo().density else -getScreenInfo().density
 
-        isDrawerOpen = moveValue != 0
+        isDrawerOpen = !isDrawerOpen
 
         binding.drawer.animate()
-                .translationX(moveValue.toFloat())
+                .translationX(moveValue)
                 .setDuration(200)
                 .start()
     }

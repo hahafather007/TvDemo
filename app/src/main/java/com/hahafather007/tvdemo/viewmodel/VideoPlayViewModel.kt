@@ -43,6 +43,7 @@ class VideoPlayViewModel : RxController {
     val tvIndex = ObservableField<String>()
 
     private var volumeTimer: Disposable? = null
+    private var tvIndexTimer: Disposable? = null
 
     init {
         val tv = TestVideos.videos.find { it.url == TvPref.lastTvUrl }
@@ -54,8 +55,8 @@ class VideoPlayViewModel : RxController {
         }
 
         tvList.addAll(TestVideos.videos)
-
         volume.set((TvPref.videoVolume * 20).toInt())
+        tvIndex.set(tvList.indexOf(currentTv.get()).toString())
     }
 
     fun setCurrentTv(data: TvData) {
@@ -77,8 +78,32 @@ class VideoPlayViewModel : RxController {
                 .subscribe()
     }
 
-    fun setTvIndex(index:Int){
+    fun setTvIndex(index: Int) {
+        // 防止输入3位数以上
+        if (isTvIndexShow.get() && tvIndex.get()!!.length == 3) return
 
+        tvIndexTimer = Observable.timer(2, TimeUnit.SECONDS)
+                .computeSwitch()
+                .doOnSubscribe {
+                    tvIndexTimer?.dispose()
+
+                    if (!isTvIndexShow.get()) {
+                        isTvIndexShow.set(true)
+                        tvIndex.set(index.toString())
+                    } else {
+                        tvIndex.set(tvIndex.get()!!.plus(index))
+                    }
+                }
+                .doOnNext {
+                    val num = tvIndex.get()!!.toInt()
+
+                    if (num <= tvList.lastIndex) {
+                        setCurrentTv(tvList[num])
+                    }
+
+                    isTvIndexShow.set(false)
+                }
+                .subscribe()
     }
 
     /**
@@ -105,5 +130,12 @@ class VideoPlayViewModel : RxController {
         }
 
         TvPref.lastTvUrl = currentTv.get()!!.url
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+
+        tvIndexTimer?.dispose()
+        volumeTimer?.dispose()
     }
 }

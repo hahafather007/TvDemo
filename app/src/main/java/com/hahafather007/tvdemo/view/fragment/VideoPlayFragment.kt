@@ -74,7 +74,6 @@ class VideoPlayFragment : Fragment(), RxController {
                 .setDataSource { RtmpDataSourceFactory() }
                 .create()
 
-
         player.apply {
             startPlayer<ExoUserPlayer>()
             setShowVideoSwitch(false)
