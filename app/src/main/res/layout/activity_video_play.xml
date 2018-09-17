@@ -55,6 +55,7 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:overScrollMode="never"
                 app:itemLayout="@{@layout/item_tv_title}"
                 app:items="@{viewModel.tvList}"
                 app:layoutManager="android.support.v7.widget.LinearLayoutManager"
