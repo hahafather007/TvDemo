@@ -6,10 +6,6 @@
     <data>
 
         <variable
-            name="index"
-            type="Integer" />
-
-        <variable
             name="data"
             type="com.hahafather007.tvdemo.model.data.TvData" />
 
@@ -47,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@{index.toString}"
+                android:text="@{String.valueOf(data.number)}"
                 android:textColor="#aaaaaa"
                 android:textSize="14sp"
                 android:textStyle="bold"

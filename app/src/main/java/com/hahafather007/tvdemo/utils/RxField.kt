@@ -8,13 +8,19 @@ import com.annimon.stream.function.Consumer
 import io.reactivex.Observable
 
 object RxField {
-    private fun <T> from(observable: android.databinding.Observable, getter: () -> T): Observable<T> {
+    private fun <T> from(observable: android.databinding.Observable, getter: () -> T?): Observable<T> {
         return Observable.create { emitter ->
-            emitter.onNext(getter.invoke())
+            val invoke = getter.invoke()
+            if (invoke != null) {
+                emitter.onNext(invoke)
+            }
 
             val callback = object : android.databinding.Observable.OnPropertyChangedCallback() {
                 override fun onPropertyChanged(sender: android.databinding.Observable, propertyId: Int) {
-                    emitter.onNext(getter.invoke())
+                    val invoke2 = getter.invoke()
+                    if (invoke2 != null) {
+                        emitter.onNext(invoke2)
+                    }
                 }
             }
             emitter.setCancellable { observable.removeOnPropertyChangedCallback(callback) }
@@ -22,8 +28,8 @@ object RxField {
         }
     }
 
-    fun <T> of(observable: ObservableField<T>): Observable<T> {
-        return from(observable) { observable.get()!! }
+    fun <T> of(observable: ObservableField<T>): Observable<T?> {
+        return from(observable) { observable.get() }
     }
 
     fun of(observable: ObservableBoolean): Observable<Boolean> {

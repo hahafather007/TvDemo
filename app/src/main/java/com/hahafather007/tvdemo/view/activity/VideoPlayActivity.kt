@@ -15,6 +15,7 @@ import android.view.KeyEvent
 import android.view.KeyEvent.*
 import android.view.View.*
 import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
+import com.annimon.stream.Optional
 import com.hahafather007.tvdemo.R
 import com.hahafather007.tvdemo.common.DataBindingItemViewBinder
 import com.hahafather007.tvdemo.common.RxController
@@ -212,7 +213,6 @@ class VideoPlayActivity : AppCompatActivity(),
 
     override fun bind(dataBinding: ViewDataBinding, data: Any, position: Int) {
         if (dataBinding is ItemTvTitleBinding) {
-            dataBinding.index = viewModel.tvList.indexOf(data)
             dataBinding.data = data as TvData
             dataBinding.viewModel = viewModel
         }
@@ -270,7 +270,7 @@ class VideoPlayActivity : AppCompatActivity(),
         RxField.of(viewModel.currentTv)
                 .disposable(this)
                 .doOnNext {
-                    val fm = VideoPlayFragment.getFragmentByUrl(it.url)
+                    val fm = VideoPlayFragment.getFragmentByUrl(it!!.url)
                     val transaction = supportFragmentManager.beginTransaction()
 
                     videoFragment = fm
@@ -279,6 +279,7 @@ class VideoPlayActivity : AppCompatActivity(),
 
                     recyclerViewScroll()
                 }
+                .doOnError { it.printStackTrace() }
                 .subscribe()
 
         // 获取视频截图并裁剪

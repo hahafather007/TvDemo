@@ -4,12 +4,18 @@ import android.databinding.ObservableArrayList
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ObservableInt
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hahafather007.tvdemo.common.RxController
-import com.hahafather007.tvdemo.common.TestVideos
 import com.hahafather007.tvdemo.model.data.TvData
 import com.hahafather007.tvdemo.model.pref.TvPref
+import com.hahafather007.tvdemo.model.service.TvService
+import com.hahafather007.tvdemo.utils.asyncSwitch
 import com.hahafather007.tvdemo.utils.computeSwitch
+import com.hahafather007.tvdemo.utils.disposable
+import com.hahafather007.tvdemo.utils.status
 import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import java.util.concurrent.TimeUnit
@@ -17,6 +23,7 @@ import java.util.concurrent.TimeUnit
 class VideoPlayViewModel : RxController {
     override val rxComposite = CompositeDisposable()
 
+    val loading = ObservableBoolean()
     /**
      * 电视节目列表
      */
@@ -42,21 +49,43 @@ class VideoPlayViewModel : RxController {
      */
     val tvIndex = ObservableField<String>()
 
+    private val tvService = TvService()
     private var volumeTimer: Disposable? = null
     private var tvIndexTimer: Disposable? = null
 
     init {
-        val tv = TestVideos.videos.find { it.url == TvPref.lastTvUrl }
+        firstInit()
 
-        if (tv != null) {
-            currentTv.set(tv)
-        } else {
-            currentTv.set(TestVideos.videos.first())
-        }
-
-        tvList.addAll(TestVideos.videos)
         volume.set((TvPref.videoVolume * 20).toInt())
-        tvIndex.set(tvList.indexOf(currentTv.get()).toString())
+
+        tvService.getTvList()
+                .asyncSwitch()
+                .disposable(this)
+                .status(loading)
+                .doOnSuccess {
+                    TvPref.tvListJson = Gson().toJson(it)
+
+                    firstInit()
+                }
+                .subscribe()
+    }
+
+    private fun firstInit() {
+        if (TvPref.tvListJson != null) {
+            val list = Gson().fromJson<List<TvData>>(TvPref.tvListJson,
+                    object : TypeToken<List<TvData>>() {}.type)
+            val tv = list.find { it.url == TvPref.lastTvUrl }
+
+            if (tv != null) {
+                setCurrentTv(tv)
+            } else {
+                setCurrentTv(list.first())
+            }
+
+            tvList.clear()
+            tvList.addAll(list)
+            tvIndex.set(tvList.indexOf(currentTv.get()).toString())
+        }
     }
 
     fun setCurrentTv(data: TvData) {
@@ -97,8 +126,12 @@ class VideoPlayViewModel : RxController {
                 .doOnNext {
                     val num = tvIndex.get()!!.toInt()
 
-                    if (num <= tvList.lastIndex) {
-                        setCurrentTv(tvList[num])
+                    if (num in 1..tvList.lastIndex + 1) {
+                        val data = tvList.find { it.number == num }
+
+                        if (data != null) {
+                            setCurrentTv(data)
+                        }
                     }
 
                     isTvIndexShow.set(false)

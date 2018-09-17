@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">天天看视频</string>
+    <string name="text_tv_loading">列表更新中…</string>
 </resources>

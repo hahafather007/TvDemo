@@ -1,5 +1,6 @@
 package com.hahafather007.tvdemo.utils
 
+import android.databinding.ObservableBoolean
 import com.hahafather007.tvdemo.common.RxController
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,9 +48,9 @@ fun <T> Single<T>.status(loading: Boolean): Single<T> {
 /**
  * @param loading 传入一个ObservableBoolean值，在加载时自动改变状态
  */
-//fun <T, B : ObservableBoolean> Single<T>.status(loading: B) =
-//        this.doOnSubscribe { loading.set(true) }
-//                .doFinally { loading.set(false) }
+fun <T, B : ObservableBoolean> Single<T>.status(loading: B) =
+        this.doOnSubscribe { loading.set(true) }
+                .doFinally { loading.set(false) }
 
 
 /**
