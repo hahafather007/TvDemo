@@ -1,4 +1,4 @@
-include ':app'
+include ':app', ':library-dash', ':library-core', ':library-hls', ':library-smoothstreaming', ':library-ui', ':testutils', ':testutils-robolectric'
 include ':VideoPlayModule'
 include ':VideoPlayModule-Lite'
 include ':VideoUi'
