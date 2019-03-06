@@ -32,17 +32,7 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
     api project(':VideoPlayModule-Lite')
-    implementation('com.google.android.exoplayer:exoplayer-smoothstreaming:2.8.4', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    api('com.google.android.exoplayer:exoplayer-dash:2.8.4', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-compat'
-        exclude group: 'com.android.support', module: 'support-core-utils'
-    })
-    api('com.google.android.exoplayer:exoplayer-hls:2.8.4', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-        exclude group: 'com.android.support', module: 'support-compat'
-        exclude group: 'com.android.support', module: 'support-core-utils'
-    })
+    implementation project(':library-smoothstreaming')
+    api project(':library-dash')
+    api project(':library-hls')
 }

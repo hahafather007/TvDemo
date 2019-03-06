@@ -13,12 +13,16 @@ import chuangyuan.ycj.videolibrary.listener.VideoInfoListener
 import chuangyuan.ycj.videolibrary.video.ExoUserPlayer
 import chuangyuan.ycj.videolibrary.video.VideoPlayerManager
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ext.rtmp.RtmpDataSourceFactory
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.UdpDataSource
 import com.hahafather007.tvdemo.R
 import com.hahafather007.tvdemo.common.RxController
 import com.hahafather007.tvdemo.databinding.FragmentVideoPlayBinding
 import com.hahafather007.tvdemo.model.pref.TvPref
-import com.hahafather007.tvdemo.utils.*
+import com.hahafather007.tvdemo.utils.computeSwitch
+import com.hahafather007.tvdemo.utils.disposable
+import com.hahafather007.tvdemo.utils.log
+import com.hahafather007.tvdemo.utils.logError
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
@@ -71,7 +75,13 @@ class VideoPlayFragment : Fragment(), RxController {
         player = VideoPlayerManager.Builder(VideoPlayerManager.TYPE_PLAY_USER, binding.videoView)
                 .setPlayUri(getUrl())
                 .setPlayerGestureOnTouch(false)
-                .setDataSource { RtmpDataSourceFactory() }
+                .setDataSource {
+                    object : DataSource.Factory {
+                        override fun createDataSource(): DataSource {
+                            return UdpDataSource(null)
+                        }
+                    }
+                }
                 .create()
 
         player.apply {
